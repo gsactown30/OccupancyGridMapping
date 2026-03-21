@@ -10,6 +10,15 @@ def convertCoord(x, y, grid):
     gridIndex = (int(x / 0.2) + centerX, int(y / 0.2) + centerY)
     return gridIndex
 
+def convertCoordAll(scan, grid):
+    centerX, centerY = grid.center
+    booleanMask = (np.abs(scan[:, 0]) < 30) & (np.abs(scan[:, 1]) < 30) & (scan[:, 2] > -2) & (scan[:, 2] < 2)
+    newScan = scan[booleanMask]
+    coordX = (newScan[:, 0] / 0.2).astype(int) + centerX
+    coordY = (newScan[:, 1] / 0.2).astype(int) + centerY
+    return np.column_stack((coordX, coordY))
+
+
 def convertProb(odd):
     return 1/(1+math.e**-odd)
 
