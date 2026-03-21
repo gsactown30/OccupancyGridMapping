@@ -16,10 +16,10 @@ drive = '0015'
 dataset = pykitti.raw(basedir, date, drive)
 occupancyGrid = Grid(2000, 2000)
 
-for i in range(0, 297):
+for i in range(0, 1):
     scan = dataset.get_velo(i)
     pose = dataset.oxts[i].T_w_imu
-    newScan = convertCoordAll(scan, occupancyGrid, pose)
+    newScan = convertCoordAll(scan, pose)
     origin = convertOrigin(pose)
 
     arrFree = []

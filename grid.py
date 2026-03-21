@@ -6,9 +6,7 @@ def convertOrigin(pose):
     origin = (originX, originY)
     return origin
 
-def convertCoordAll(scan, grid, pose):
-    origin = convertOrigin(pose)
-    centerX, centerY = origin
+def convertCoordAll(scan, pose):
     booleanMask = (np.abs(scan[:, 0]) < 30) & (np.abs(scan[:, 1]) < 30) & (scan[:, 2] < 2)
     newScan = scan[booleanMask]
     newScan[:, 3] = 1
