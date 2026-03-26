@@ -14,7 +14,7 @@ date = '2011_09_26'
 drive = '0015'
 
 dataset = pykitti.raw(basedir, date, drive)
-occupancyGrid = Grid(2000, 2000)
+occupancyGrid = Grid(2000, 2000, 20)
 
 for i in range(0, 1):
     scan = dataset.get_velo(i)
@@ -27,17 +27,22 @@ for i in range(0, 1):
 
     for point in newScan:
         coord = (point[0], point[1])
+        coordHit = (point[0], point[1], point[2])
         arrFree.extend(bresenham(origin, coord))
-        arrHit.append(coord)
+        arrHit.append(coordHit)
 
     arrFree = np.array(arrFree)
-    np.add.at(occupancyGrid.array, (arrFree[:, 0], arrFree[:, 1]), -0.2)
+    np.add.at(occupancyGrid.array, (slice(None), arrFree[:, 0], arrFree[:, 1]), -0.2)
 
     arrHit = np.array(arrHit)
-    np.add.at(occupancyGrid.array, (arrHit[:, 0], arrHit[:, 1]), 1)
+    np.add.at(occupancyGrid.array, (arrHit[:, 2], arrHit[:, 0], arrHit[:, 1]), 1)
     occupancyGrid.array = np.clip(occupancyGrid.array, -10, 10)
 
 probabilities = 1 / (1 + np.exp(-(occupancyGrid.array)))
+
+print(occupancyGrid.array.max())
+print(occupancyGrid.array.min())
+print(np.count_nonzero(occupancyGrid.array))
 
 plt.imshow(probabilities, cmap='binary', interpolation='nearest', vmax=1, vmin=0, origin="lower")
 plt.colorbar()
