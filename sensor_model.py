@@ -3,11 +3,13 @@ import numpy as np
 from grid import Grid
 from grid import convertCoordAll2D
 from grid import convertCoordAll3D
+from grid import convertCoordAllAnim
 from grid import convertOrigin
 from raycast import bresenham
 import time
 import open3d as o3d
 import matplotlib.pyplot as plt
+import imageio
 
 startTime = time.perf_counter()
 
@@ -16,14 +18,12 @@ date = '2011_09_26'
 drive = '0015'
 dataset = pykitti.raw(basedir, date, drive)
 
-choice = int(input('2d(1) or 3d(2) scan'))
+choice = int(input('2d(1) or 3d(2) scan or 2d animation(3)'))
 startScan = int(input('starting scan (0 for default)'))
 maxScan = startScan + int(input('how many scans'))
 
 if choice == 1:
     occupancyGrid = Grid(2000, 2000)
-    print(startScan)
-    print(maxScan)
 
     for i in range(startScan, maxScan):
         scan = dataset.get_velo(i)
@@ -101,3 +101,36 @@ elif choice == 2:
     print(f"Program runtime: {endTime - startTime:.2f} seconds")
 
     o3d.visualization.draw_geometries([pcd])
+
+elif choice == 3:
+    occupancyGrid = Grid(301, 301)
+    frames = []
+
+    for i in range(startScan, maxScan):
+        scan = dataset.get_velo(i)
+        newScan = convertCoordAllAnim(scan)
+        origin = occupancyGrid.center
+
+        arrFree = []
+        arrHit = []
+
+        for point in newScan:
+            coord = (point[0], point[1])
+            arrFree.extend(bresenham(origin, coord))
+            arrHit.append(coord)
+
+        arrFree = np.array(arrFree)
+        np.add.at(occupancyGrid.array, (0, arrFree[:, 0], arrFree[:, 1]), -0.2)
+
+        arrHit = np.array(arrHit)
+        np.add.at(occupancyGrid.array, (0, arrHit[:, 0], arrHit[:, 1]), 2)
+        occupancyGrid.array = np.clip(occupancyGrid.array, -10, 10)
+
+        probabilities = 1 / (1 + np.exp(-(occupancyGrid.array)))
+
+        frames.append((probabilities[0] * 255).astype(np.uint8))
+
+    imageio.mimsave("occupancy.gif", frames, fps=10)
+
+    endTime = time.perf_counter()
+    print(f"Program runtime: {endTime - startTime:.2f} seconds")

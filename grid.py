@@ -53,10 +53,30 @@ def convertCoordAll2D(scan, pose):
     coordY = (newScan[:, 1] / 0.2).astype(int) + 200
     return np.column_stack((coordX, coordY))
 
+def convertCoordAllAnim(scan):
+    booleanMask = (np.abs(scan[:, 0]) < 30) & (np.abs(scan[:, 1]) < 30)
+    newScan = scan[booleanMask]
+    heightMask = (newScan[:, 2] < 2) & (newScan[:, 2] > -2)
+    newScan = newScan[heightMask]
+
+    groundMask = (newScan[:, 2] < -1.5) & (newScan[:, 2] > -3.5)
+    groundPoints = newScan[groundMask]
+    groundPoints = groundPoints[:, :3]
+    pcdGround = o3d.geometry.PointCloud()
+    pcdGround.points = o3d.utility.Vector3dVector(groundPoints)
+    groundPlane = pcdGround.segment_plane(0.01, 3, 10)
+    equation, pointsInPlane = groundPlane
+    removalMask = np.abs((newScan[:, 0] * equation[0]) + (newScan[:, 1] * equation[1]) + (newScan[:, 2] * equation[2]) + (equation[3])) > 0.1
+    newScan = newScan[removalMask]
+
+    coordX = (newScan[:, 0] / 0.2).astype(int) + 150
+    coordY = (newScan[:, 1] / 0.2).astype(int) + 150
+    return np.column_stack((coordX, coordY))
+
 class Grid():
     def __init__(self, xAxis, yAxis, zAxis = 1):
         self.array = np.zeros((zAxis, xAxis, yAxis))
         self.xAxis = xAxis
         self.yAxis = yAxis
         self.zAxis = zAxis
-        #self.center = (xAxis//2, yAxis//2)
+        self.center = (xAxis//2, yAxis//2)
