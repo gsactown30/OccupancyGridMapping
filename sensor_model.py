@@ -94,9 +94,7 @@ elif choice == 2:
 
     pcd = o3d.geometry.PointCloud()
     pcd.points = o3d.utility.Vector3dVector(newOccupied)
-    #o3d.geometry.PointCloud.segment_plane()
-    pcd.remove_statistical_outlier(20, 2, True)
-
+    pcd, ind = pcd.remove_statistical_outlier(5, 2, True)
     endTime = time.perf_counter()
     print(f"Program runtime: {endTime - startTime:.2f} seconds")
 
