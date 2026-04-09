@@ -1,9 +1,7 @@
 import pykitti
 import numpy as np
 from grid import Grid
-from grid import convertCoordAll2D
-from grid import convertCoordAll3D
-from grid import convertCoordAllAnim
+from grid import convertCoordAll
 from grid import convertOrigin
 from raycast import bresenham
 import time
@@ -28,7 +26,7 @@ if choice == 1:
     for i in range(startScan, maxScan):
         scan = dataset.get_velo(i)
         pose = dataset.oxts[i].T_w_imu
-        newScan = convertCoordAll2D(scan, pose)
+        newScan = convertCoordAll(scan, 200, pose)
         origin = convertOrigin(pose)
 
         arrFree = []
@@ -64,7 +62,7 @@ elif choice == 2:
     for i in range(startScan, maxScan):
         scan = dataset.get_velo(i)
         pose = dataset.oxts[i].T_w_imu
-        newScan = convertCoordAll3D(scan, pose)
+        newScan = convertCoordAll(scan, 200, pose, True)
         origin = convertOrigin(pose)
 
         arrFree = []
@@ -106,7 +104,7 @@ elif choice == 3:
 
     for i in range(startScan, maxScan):
         scan = dataset.get_velo(i)
-        newScan = convertCoordAllAnim(scan)
+        newScan = convertCoordAll(scan, 150)
         origin = occupancyGrid.center
 
         arrFree = []
