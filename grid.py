@@ -4,7 +4,6 @@ import open3d as o3d
 def convertOrigin(pose):
     originX = (pose[0, 3] / 0.2).astype(int) + 200
     originY = (pose[1, 3] / 0.2).astype(int) + 200
-    #originZ = (pose[2, 3] / 0.2).astype(int) + 10
     origin = (originX, originY)
     return origin
 
@@ -16,7 +15,7 @@ def convertCoordAll3D(scan, pose):
     heightMask = (newScan[:, 2] < 2) & (newScan[:, 2] > -2)
     newScan = newScan[heightMask]
 
-    groundMask = (newScan[:, 2] < -1.5) & (newScan[:, 2] > -3.5)
+    groundMask = (newScan[:, 2] < -1.5) & (newScan[:, 2] > -2)
     groundPoints = newScan[groundMask]
     groundPoints = groundPoints[:, :3]
     pcdGround = o3d.geometry.PointCloud()
@@ -39,7 +38,7 @@ def convertCoordAll2D(scan, pose):
     heightMask = (newScan[:, 2] < 2) & (newScan[:, 2] > -2)
     newScan = newScan[heightMask]
 
-    groundMask = (newScan[:, 2] < -1.5) & (newScan[:, 2] > -3.5)
+    groundMask = (newScan[:, 2] < -1.5) & (newScan[:, 2] > -2)
     groundPoints = newScan[groundMask]
     groundPoints = groundPoints[:, :3]
     pcdGround = o3d.geometry.PointCloud()
@@ -59,7 +58,7 @@ def convertCoordAllAnim(scan):
     heightMask = (newScan[:, 2] < 2) & (newScan[:, 2] > -2)
     newScan = newScan[heightMask]
 
-    groundMask = (newScan[:, 2] < -1.5) & (newScan[:, 2] > -3.5)
+    groundMask = (newScan[:, 2] < -1.5) & (newScan[:, 2] > -2)
     groundPoints = newScan[groundMask]
     groundPoints = groundPoints[:, :3]
     pcdGround = o3d.geometry.PointCloud()
