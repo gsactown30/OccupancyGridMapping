@@ -141,6 +141,16 @@ Output files are saved to the project root:
 
 ---
 
+## Related Projects
+
+This project is the first in a series building toward a full AV perception pipeline on the KITTI dataset:
+
+1. [Occupancy Grid Mapping](https://github.com/gsactown30/OccupancyGridMapping) — Bayesian probabilistic mapping with log-odds updates and Bresenham ray casting
+2. [LiDAR Camera Sensor Fusion](https://github.com/gsactown30/KITTI-lidar-camera-sensor-fusion) — Full projection pipeline, dense depth completion, RGB-colored 3D point clouds
+3. [KITTI 2D Object Detection and 3D Localization](https://github.com/gsactown30/KITTI-2D-object-detection-and-3D-localization) — YOLO11 detection, LiDAR depth sampling, back-projection into 3D camera coordinates
+
+---
+
 ## References
 
 - Thrun, S., Burgard, W., Fox, D. (2005). *Probabilistic Robotics*. MIT Press.
